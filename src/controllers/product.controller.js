@@ -5,18 +5,16 @@ export const createProducts = async (req, res) =>{
     console.log(req.body);
     console.log(req.files);
 
-    const fileUrls = [];
 
-    for(let i=0;i<req.files.length;i++){
-        const response = await uploadFile({
-            buffer: req.files[i].buffer,
-            fileName: req.files[i].originalname,
+    const uploadImages = req.files.map((file) => {
+        return uploadFile({
+            buffer: file.buffer,
+            fileName: file.originalname
         })
+    })
 
-        fileUrls.push(response.url)
-
-        console.log(response)
-    }
+    const response = await Promise.all(uploadImages)
+    const fileUrls = response.map(response => response.url)
 
     console.log(fileUrls)
 
